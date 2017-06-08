@@ -4,10 +4,11 @@ var mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
 var Base = new Schema({
-  songposter: { type: String, required: '`songposter`是必填'},
-  songname: { type: String, required: '`songname`是必填' },
-  songauthor: { type: String, default: ''},
-  songurl: { type: String, required: '`songurl`是必填'}
+  id: { type: String, required: '`id`是必填'},
+  poster: { type: String, required: '`poster`是必填'},
+  name: { type: String, required: '`name`是必填' },
+  author: { type: String, default: ''},
+  url: { type: String, required: '`url`是必填'}
 });
 
 Base.virtual('date')
