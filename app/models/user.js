@@ -5,8 +5,8 @@ var mongoose = require('mongoose'),
 
 var User = new Schema({
   openid: { type: String, required: '`openid`是必填' },
-  username: { type: String, required: '`username`是必填' },
-  city: { type: String, default: ''}
+  nickName: { type: String, required: '`nickName`是必填' },
+  city: { type: String, default: 'null'}
 });
 
 User.virtual('date')

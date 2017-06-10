@@ -7,8 +7,7 @@ var Base = new Schema({
   id: { type: String, required: '`id`是必填'},
   poster: { type: String, required: '`poster`是必填'},
   name: { type: String, required: '`name`是必填' },
-  author: { type: String, default: ''},
-  url: { type: String, required: '`url`是必填'}
+  author: { type: String, default: ''}
 });
 
 Base.virtual('date')
