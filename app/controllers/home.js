@@ -112,11 +112,11 @@ router.post('/mini/delfrommylist', function (req, res, next) {
 			console.error('user find err:' , err);
 			return;
 		}
-        console.log('song删除');
-        Song.remove({user: userfindres[0],id: resData.id}).exec(function (err, songdelres) {
-        	console.log('song del');
-        	_res.send('删除成功');
-    	});
+    console.log('song删除');
+    Song.remove({user: userfindres[0],id: resData.id}).exec(function (err, songdelres) {
+    	console.log('song del');
+    	_res.send('删除成功');
+	  });
 	});
 })
 
@@ -190,13 +190,20 @@ router.get('/mini/getplaylist', function (req, res, next) {
 //获取搜索结果
 router.get('/mini/search', function (req, res, next) {
 	let _res = res;
-	let s = req.query.s;
+	let s = req.query.s;   
 	let limit = 10;
+	console.log(s);
 	request({ 
-		url: `https://api.imjad.cn/cloudmusic/?type=search&search_type=1&s=${s}&limit=${limit}`
+		url: `https://api.imjad.cn/cloudmusic/?type=search&search_type=1&s=${encodeURI(s)}&limit=${limit}`
 	}, function (err, res, body) {
 		if(err){
 			console.error('search 结果 find err:' , err);
+			return;
+		}
+		console.log(body);
+		//输入中文搜索会出错？？？？
+		if (!body) {
+			_res.send('body不存在');
 			return;
 		}
 		var bodyData = JSON.parse(body);
@@ -286,12 +293,12 @@ function getList() {
 				}else {
 					const base = new Base({
 	             		id,poster,name,author,url
-				    });
-			        base.save(function (err, base) {
-			            if (err) {
-			                console.error('conversation save err:' , err);
-			            }
-			        })
+				  });
+	        base.save(function (err, base) {
+	            if (err) {
+	                console.error('conversation save err:' , err);
+	            }
+	        })
 				}
 			})	
 		})(0)
