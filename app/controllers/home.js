@@ -95,7 +95,7 @@ router.post('/mini/addtomylist', function (req, res, next) {
 	        }
 	        console.log('song保存成功');
 	        Song.find({user: userfindres[0]}).exec(function (err, songfindres) {
-	        	console.log('song del');
+	        	console.log('song save');
 	        	_res.send('添加成功');
 	    	});
 	    	
@@ -175,14 +175,14 @@ router.get('/mini/getplaylist', function (req, res, next) {
 			}
 			let author = tracks[index].ar[0].name;		
 			const base = new Base({
-	     		id,poster,name,author
-		    });
-	        base.save(function (err, base) {
-	            if (err) {
-	                console.error('conversation save err:' , err);
-	            }
-	        })
-	        console.log(num++);
+     		id,poster,name,author
+	    });
+      base.save(function (err, base) {
+          if (err) {
+              console.error('conversation save err:' , err);
+          }
+      })
+      console.log(num++);
 		})
 	})
 })
@@ -247,6 +247,7 @@ router.get('/mini/getUrl', function (req, res, next) {
 	})
 })
 
+//定时更新歌曲链接
 let rule = new schedule.RecurrenceRule();
 rule.minute = [0, 15, 45]; 
 
@@ -269,38 +270,60 @@ function getList() {
 		let num = 0;
 		//forEach循环服务器会崩溃
 		// 递归解决
-		(function getdata(index) {
-		    if(index>=tracks.length) {
-		    	console.log('写入数据库结束');
-		    	return true;
-		    }
-		   	let id = tracks[index].id;
-			let poster = tracks[index].al.picUrl;
-			let name = tracks[index].name.split('(').shift();
-			let author = tracks[index].ar[0].name;
-			let url = '';
-	    	request({
-				url: `https://api.imjad.cn/cloudmusic/?type=song&id=${id}`
-			}, function (err, res, body) {
-				if (body.includes('<html>')) return; //判断返回数据是否标准
-				getdata(index+1);	
-				let bodyData = JSON.parse(body);
-				url = bodyData.data[0].url;
-				if (!url) {
-					console.log(name);
-					console.log(num ++);
-					return 
-				}else {
-					const base = new Base({
-	             		id,poster,name,author,url
-				  });
-	        base.save(function (err, base) {
-	            if (err) {
-	                console.error('conversation save err:' , err);
-	            }
-	        })
-				}
-			})	
-		})(0)
+		// (function getdata(index) {
+		//     if(index>=tracks.length) {
+		//     	console.log('写入数据库结束');
+		//     	return true;
+		//     }
+		//    	let id = tracks[index].id;
+		// 	let poster = tracks[index].al.picUrl;
+		// 	let name = tracks[index].name.split('(').shift();
+		// 	let author = tracks[index].ar[0].name;
+		// 	let url = '';
+	 //    request({
+		// 		url: `https://api.imjad.cn/cloudmusic/?type=song&id=${id}`
+		// 	}, function (err, res, body) {
+		// 		if (body.includes('<html>')) return; //判断返回数据是否标准
+		// 		getdata(index+1);	
+		// 		let bodyData = JSON.parse(body);
+		// 		url = bodyData.data[0].url;
+		// 		if (!url) {
+		// 			console.log(name);
+		// 			console.log(num ++);
+		// 			return 
+		// 		}else {
+		// 			const base = new Base({
+	 //           id,poster,name,author,url
+		// 		  });
+	 //        base.save(function (err, base) {
+  //           if (err) {
+  //               console.error('conversation save err:' , err);
+  //           }
+	 //        })
+		// 		}
+		// 	})	
+		// })(0)
+
+    tracks.forEach((v,index,a) => {
+      let id = tracks[index].id;
+      let poster = tracks[index].al.picUrl;
+      if (tracks[index].name.indexOf('(') > -1) {
+        name = tracks[index].name.split('(').shift();
+      }else if (tracks[index].name.indexOf('（') > -1) {
+        name = tracks[index].name.split('（').shift();
+      }else{
+        name = tracks[index].name;
+      }
+      let author = tracks[index].ar[0].name;    
+      const base = new Base({
+        id,poster,name,author
+      });
+      base.save(function (err, base) {
+          if (err) {
+              console.error('conversation save err:' , err);
+          }
+      })
+      console.log(num++);
+    })
 	})
 }
