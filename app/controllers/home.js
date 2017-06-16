@@ -228,6 +228,9 @@ router.get('/mini/search', function (req, res, next) {
 			})
 			console.log('push完毕');
 			_res.send(resArray);
+		}else{
+			console.log('没有结果');
+			_res.send('false');
 		}
 	})
 })
