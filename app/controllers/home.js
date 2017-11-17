@@ -201,7 +201,7 @@ router.get('/mini/search', function (req, res, next) {
 			return;
 		}
 		console.log(body);
-		//输入中文搜索会出错？？？？
+		//输入中文搜索会出错？？？？ 应该是因为传输的时候没有encodeURI
 		if (!body) {
 			_res.send('body不存在');
 			return;
